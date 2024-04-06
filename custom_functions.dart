@@ -108,12 +108,25 @@ double getProductPrice(String? price) {
 dynamic lineItems(dynamic products) {
   // return list of products with only id and quantity
 
-  return products!
-      .map((product) => {
-            'product_id': product['id'],
-            'quantity': product['quantity']['value']
-          })
-      .toList();
+  if (products is List) {
+    // Scenario 1: List of objects
+    return products
+        .map((item) => {
+              'product_id': item['id'],
+              'quantity': item['quantity']['value'],
+            })
+        .toList();
+  } else if (products is Map) {
+    // Scenario 2: Single object
+    return [
+      {
+        'product_id': products['id'],
+        'quantity': products['quantity']['value'],
+      }
+    ];
+  } else {
+    throw Exception('Invalid data format. Please provide a list or a map.');
+  }
 }
 
 bool isSimpleorVariableProduct(String producttype) {
